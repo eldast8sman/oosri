@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Seller extends Model implements JWTSubject
+class Seller extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'first_name',
@@ -25,6 +28,9 @@ class Seller extends Model implements JWTSubject
         'token_expiry',
         'email_verified',
         'business_id',
+        'government_id_type',
+        'government_id',
+        'activation_status',
         'last_login',
         'prev_login'
     ];

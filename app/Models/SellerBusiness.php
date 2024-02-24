@@ -23,8 +23,6 @@ class SellerBusiness extends Model
         'registration_number',
         'description',
         'tin',
-        'government_id_type',
-        'government_id',
         'registration_certificate',
         'email',
         'phone'

@@ -24,8 +24,6 @@ return new class extends Migration
             $table->string('registration_number')->nullable();
             $table->longText('description')->nullable();
             $table->string('tin')->nullable();
-            $table->string('government_id_type')->nullable();
-            $table->integer('government_id')->nullable();
             $table->integer('registration_certificate')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
