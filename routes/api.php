@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Seller\AuthController;
+use App\Http\Controllers\Seller\SellerBusinessController;
+use App\Http\Controllers\Seller\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +31,17 @@ Route::prefix('seller')->group(function(){
             Route::get('/me', 'me')->name('seller.me');
             Route::get('/resend-activation-pin', 'resend_pin')->name('seller.resendPin');
             Route::post('/activate', 'activate_account')->name('seller.activate');
+        });
+
+        Route::controller(SellerBusinessController::class)->group(function(){
+            Route::post('/businesses', 'store')->name('seller.business.store');
+            Route::get('/businesses', 'index')->nam('seller.business.index');
+            Route::get('/businesses/{slug}', 'show')->name('seller.business.show');
+            Route::get('/businesses/{slug}/switch', 'switch_business')->name('seller.switchBusiness');
+        });
+
+        Route::controller(WalletController::class)->group(function(){
+            Route::post('bank-details', 'set_account_details')->name('seller.accountDetails');
         });
     });
 });
