@@ -25,7 +25,8 @@ class SellerBusiness extends Model
         'tin',
         'registration_certificate',
         'email',
-        'phone'
+        'phone',
+        'activation_status'
     ];
 
     public function getSlugOptions(): SlugOptions

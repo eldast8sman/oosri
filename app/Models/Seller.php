@@ -40,7 +40,8 @@ class Seller extends Authenticatable implements JWTSubject
         'verification_token',
         'verification_token_expiry',
         'token',
-        'token_expiry'
+        'token_expiry',
+        'activation_status'
     ];
 
     protected $casts = [

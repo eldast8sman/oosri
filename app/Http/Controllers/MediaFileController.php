@@ -6,6 +6,7 @@ use App\Models\MediaFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MediaFileController extends Controller
 {

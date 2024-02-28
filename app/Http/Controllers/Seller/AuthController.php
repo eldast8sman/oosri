@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MediaFileController;
 use App\Http\Requests\Seller\ActivateAccountRequest;
 use App\Http\Requests\Seller\CheckPINRequest;
 use App\Http\Requests\Seller\ForgotPasswordRequest;
@@ -27,7 +28,11 @@ class AuthController extends Controller
 
     public static function seller(Seller $seller): Seller{
         $seller = Seller::find($seller->id);
-        $seller->profile_photo = !empty($seller->profile_photo) ? MediaFile::find($seller->profile_photo)->url : "";
+        $seller->profile_photo = !empty($seller->profile_photo) ? MediaFileController::fetch_file($seller->profile_photo)->url : "";
+        $seller->government_id = !empty($seller->government_id) ? MediaFileController::fetch_file($seller->government_id)->url : "";
+        if(!empty($seller->business_id)){
+            $seller->current_business = SellerBusinessController::business(SellerBusiness::find($seller->business_id));
+        }
 
         $businesses = [];
         $sel_businesses = SellerBusinessSeller::where('seller_id', $seller->id)->orderBy('created_at', 'desc');
@@ -54,6 +59,13 @@ class AuthController extends Controller
             ], 500);
         }
 
+        if(!empty($request->government_id_type) and !empty($request->government_id)){
+            if($upload = MediaFileController::upload_file($request->government_id)){
+                $seller->government_id_type = $request->government_id_type;
+                $seller->government_id = $upload->id;
+                $seller->save();
+            }
+        }
         if($request->business_type == "personal"){
             if(!$business = SellerBusiness::create([
                 'email' => $seller->email,
