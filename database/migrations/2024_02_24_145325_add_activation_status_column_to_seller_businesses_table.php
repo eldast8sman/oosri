@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('seller_businesses', function (Blueprint $table) {
-            $table->string('activation_status')->default(0)->after('phone');
+            $table->string('verification_status')->default(0)->after('phone');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('seller_businesses', function (Blueprint $table) {
-            $table->dropColumn('activation_status');
+            $table->dropColumn('verfication_status');
         });
     }
 };

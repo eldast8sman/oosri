@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ActivateAccountRequest extends FormRequest
+class CheckPINRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class ActivateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required|string|exists:admins,verification_token',
-            'password' => 'required|string|min:8|confirmed'
+            'email' => 'required|string|email|exists:admins,email',
+            'pin' => 'required|string|min:6|max:6'
         ];
     }
 }

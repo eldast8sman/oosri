@@ -24,7 +24,7 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email|exists:admins,email',
-            'otp' => 'required|string',
+            'pin' => 'required|string',
             'password' => [
                 'string',
                 Password::min(8)->mixedCase()->symbols()->uncompromised(),

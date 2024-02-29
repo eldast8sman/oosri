@@ -23,7 +23,7 @@ class StoreBusinessRequest extends FormRequest
     {
         return [
             'business_name' => 'required|string',
-            'email' => 'required|string|email|exists:seller_businesses,email',
+            'email' => 'required|string|email|unique:seller_businesses,email',
             'business_type' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',

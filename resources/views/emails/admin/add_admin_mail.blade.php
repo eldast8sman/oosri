@@ -3,9 +3,7 @@
 
 Click on the link below to activate your account.
 
-<x-mail::button :url="'{{ env('ADMIN_URL').'/admin/activate/'.$token }}'">
-Button Text
-</x-mail::button>
+<a href="{{ env('ADMIN_URL').'/activate/'.$token }}">Activate Account</a>
 
 Thanks,<br>
 {{ config('app.name') }}

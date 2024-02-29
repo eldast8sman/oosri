@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ActivateAccountRequest extends FormRequest
+class UpdateAdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,10 @@ class ActivateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required|string|exists:admins,verification_token',
-            'password' => 'required|string|min:8|confirmed'
+            'name' => 'required|string',
+            'email' => 'required|string|email',
+            'role' => 'required|string',
+            'phone' => 'required|string'
         ];
     }
 }

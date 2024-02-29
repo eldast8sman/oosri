@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ActivateAccountRequest;
+use App\Http\Requests\Admin\ChangePasswordRequest;
+use App\Http\Requests\Admin\CheckPINRequest;
 use App\Http\Requests\Admin\ForgotPasswordRequest;
 use App\Http\Requests\Admin\LoginRequest;
 use App\Http\Requests\Admin\ResetPasswordRequest;
@@ -25,33 +27,6 @@ class AuthController extends Controller
         return auth('admin-api')->user();
     }
 
-    public function store(StoreAdminRequest $request){
-        $user = self::user();
-        if($user->role != "super"){
-            return response([
-                'status' => 'failed',
-                'message' => 'Not Authorized to add an Admin'
-            ], 409);
-        }
-        if($admin = Admin::create($request->all())){
-            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
-            $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
-            $admin->save();
-
-            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));
-            return response([
-                'status' => 'success',
-                'message' => 'Admin added successfully',
-                'data' => $admin
-            ], 200);
-        } else {
-            return response([
-                'status' => 'failed',
-                'message' => 'Admin creation failed'
-            ], 409);
-        }
-    }
-
     public function storeAdmin(Request $request){
         $admin = Admin::create([
             'email' => $request->email,
@@ -60,11 +35,11 @@ class AuthController extends Controller
             'role' => $request->role
         ]);
 
-        $admin->token = base64_encode($admin->id."PsychInsights".Str::random(20));
-        $admin->token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+        $admin->verification_token = base64_encode($admin->id."PsychInsights".Str::random(20));
+        $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
         $admin->save();
 
-        Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));
+        Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->verification_token));
         return response([
             'status' => 'success',
             'message' => 'Admin added successfully',
@@ -81,12 +56,12 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if($admin->verification_token_expirytoken_expiry < date('Y-m-d H:i:s')){
-            $admin->verification_token = base64_encode($admin->id."PsychInsights".Str::random(20));
+        if($admin->verification_token_expiry < date('Y-m-d H:i:s')){
+            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
             $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
             $admin->save();
 
-            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));
+            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->verifcation_token));
             return response([
                 'status' => 'failed',
                 'message' => 'Link has expired. However another link has been sent to '.$admin->email
@@ -109,12 +84,12 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if($admin->verification_token_expirytoken_expiry < date('Y-m-d H:i:s')){
-            $admin->token = base64_encode($admin->id."PsychInsights".Str::random(20));
-            $admin->token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+        if($admin->verification_token_expiry < date('Y-m-d H:i:s')){
+            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
+            $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
             $admin->save();
 
-            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));
+            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->verfication_token));
             return response([
                 'status' => 'failed',
                 'message' => 'Link has expired. However another link has been sent to '.$admin->email
@@ -122,7 +97,7 @@ class AuthController extends Controller
         }
 
         $admin->password = Hash::make($request->password);
-        $admin->status = 1;
+        $admin->verification_status = 1;
         $admin->verification_token = null;
         $admin->verification_token_expiry = null;
         $admin->save();
@@ -189,6 +164,48 @@ class AuthController extends Controller
         return $admin;
     }
 
+    public function pin_check($email, $pin){
+        $admin = Admin::where('email', $email)->first();
+        if(empty($admin->token)){
+            $this->errors = "Wrong PIN";
+            $admin->token = NULL;
+            $admin->token_expiry = NULL;
+            $admin->save();
+            return false;
+
+        }
+        if(empty($admin->token_expiry) or ($admin->token_expiry < date('Y-m-d H:i:s'))){           
+            $this->errors = "Expired PIN";
+            $admin->token = NULL;
+            $admin->token_expiry = NULL;
+            $admin->save();
+            return false;
+        }
+        if(Crypt::decryptString($admin->token) != $pin){
+            $this->errors = "Wrong PIN";
+            $admin->token = NULL;
+            $admin->token_expiry = NULL;
+            $admin->save();
+            return false;
+        }
+
+        return true;
+    }
+
+    public function check_pin(CheckPINRequest $request){
+        if(!$this->pin_check($request->email, $request->pin)){
+            return response([
+                'status' => 'failed',
+                'message' => $this->errors
+            ], 409);
+        }
+
+        return response([
+            'status' => 'success',
+            'message' => 'Valid PIN'
+        ], 200);
+    }
+
     public function forgot_password(ForgotPasswordRequest $request){
         $admin = Admin::where('email', $request->email)->first();
         if($admin->status != 1){
@@ -225,19 +242,10 @@ class AuthController extends Controller
             ], 409);
         }
 
-        if($admin->token_expiry < date('Y-m-d H:i:s')){
-            $admin->token = null;
-            $admin->token_expiry = null;
-            $admin->save();
+        if(!$this->pin_check($request->email, $request->pin)){
             return response([
                 'status' => 'failed',
-                'message' => 'Link has expired'
-            ], 409);
-        }
-        if(Crypt::decryptString($admin->token) != $request->otp){
-            return response([
-                'status' => 'failed',
-                'message' => 'Wrong OTP'
+                'message' => $this->errors
             ], 409);
         }
 

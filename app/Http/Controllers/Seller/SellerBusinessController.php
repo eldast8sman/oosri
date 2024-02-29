@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MediaFileController;
 use App\Http\Requests\Seller\StoreBusinessRequest;
+use App\Models\BusinessAccountDetail;
 use App\Models\BusinessSocialMedia;
 use App\Models\MediaFile;
 use App\Models\Seller;
@@ -18,13 +19,14 @@ class SellerBusinessController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:seller_api');
+        $this->middleware('auth:seller-api');
         $this->user = AuthController::user();
     }
 
     public static function business(SellerBusiness $business) : SellerBusiness
     {
         $business->registration_certificate = !empty($business->registration_certificate) ? MediaFile::find($business->registration_certificate)->url : "";
+        $business->account_details = BusinessAccountDetail::where('seller_business_id', $business->id)->first();
         $business->social_media = BusinessSocialMedia::where('seller_business_id', $business->id)->get();
         return $business;
     }
@@ -50,6 +52,11 @@ class SellerBusinessController extends Controller
                 $business->save();
             }
         }
+
+        SellerBusinessSeller::create([
+            'seller_id' => $this->user->id,
+            'seller_business_id' => $business->id
+        ]);
 
         return response([
             'status' => 'success',
