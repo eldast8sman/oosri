@@ -14,7 +14,7 @@ class WalletController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:seller_api');
+        $this->middleware('auth:seller-api');
         $this->user = AuthController::user();
     }
 

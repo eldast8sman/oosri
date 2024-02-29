@@ -53,6 +53,11 @@ class SellerBusinessController extends Controller
             }
         }
 
+        SellerBusinessSeller::create([
+            'seller_id' => $this->user->id,
+            'seller_business_id' => $business->id
+        ]);
+
         return response([
             'status' => 'success',
             'message' => 'Business added successfully',

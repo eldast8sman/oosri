@@ -26,33 +26,6 @@ class AuthController extends Controller
         return auth('admin-api')->user();
     }
 
-    public function store(StoreAdminRequest $request){
-        $user = self::user();
-        if($user->role != "super"){
-            return response([
-                'status' => 'failed',
-                'message' => 'Not Authorized to add an Admin'
-            ], 409);
-        }
-        if($admin = Admin::create($request->all())){
-            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
-            $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
-            $admin->save();
-
-            Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));
-            return response([
-                'status' => 'success',
-                'message' => 'Admin added successfully',
-                'data' => $admin
-            ], 200);
-        } else {
-            return response([
-                'status' => 'failed',
-                'message' => 'Admin creation failed'
-            ], 409);
-        }
-    }
-
     public function storeAdmin(Request $request){
         $admin = Admin::create([
             'email' => $request->email,

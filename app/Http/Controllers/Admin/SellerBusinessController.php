@@ -127,7 +127,7 @@ class SellerBusinessController extends Controller
     public function verification(SellerBusiness $business){
         $business->verification_status = ($business->verification_status == 0) ? 1 : 0;
         $business->save();
-        $seller = Seller::find(SellerBusinessSeller::where('seller_business_id', $business_id)->orderBy('created_at', 'asc')->first()->seller_id);
+        $seller = Seller::find(SellerBusinessSeller::where('seller_business_id', $business->id)->orderBy('created_at', 'asc')->first()->seller_id);
         $seller->name = $seller->first_name.' '.$seller->last_name;
 
         Mail::to($seller)->send(new BusinessVerificationMail($seller->name, $business->business_name, $business->verification_status));
