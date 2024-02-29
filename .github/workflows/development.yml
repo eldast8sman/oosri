@@ -49,7 +49,7 @@ jobs:
           script_stop: true
           script: |
             cd /home/oosrnrnr
-            git clone --single-branch --branch development https://github.com/eldast8sman/oosri.git backend_d
+            git clone --single-branch --branch development git@github.com:eldast8sman/oosri.git laravel_backend
             composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 #            cd backend_dev
 #            git stash
