@@ -83,7 +83,7 @@ class AuthController extends Controller
         }
 
         if($admin->verification_token_expirytoken_expiry < date('Y-m-d H:i:s')){
-            $admin->verification_token = base64_encode($admin->id."PsychInsights".Str::random(20));
+            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
             $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
             $admin->save();
 
@@ -111,8 +111,8 @@ class AuthController extends Controller
         }
 
         if($admin->verification_token_expirytoken_expiry < date('Y-m-d H:i:s')){
-            $admin->token = base64_encode($admin->id."PsychInsights".Str::random(20));
-            $admin->token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
+            $admin->verification_token = base64_encode($admin->id."OosriAdmin".Str::random(20));
+            $admin->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 60 * 24));
             $admin->save();
 
             Mail::to($admin)->send(new AddAdminMail($admin->name, $admin->token));

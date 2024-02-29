@@ -20,7 +20,7 @@ class WalletController extends Controller
 
     public function set_account_details(SetAccountDetailsRequest $request){
         $business = SellerBusiness::find($this->user->business_id);
-        if($business->activation_status == 1){
+        if($business->verification_status == 1){
             return response([
                 'status' => 'failed',
                 'message' => 'You can no longer change the details of a Business when it has been approved. Please reach out to Admin'
