@@ -48,15 +48,17 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script_stop: true
           script: |
-            cd /home/psycsboi
-            cd backend_dev
-            git stash
-            git pull origin development
+            cd /home/oosrnrnr
+            git clone --single-branch --branch development https://github.com/eldast8sman/oosri.git backend_d
             composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-            php artisan migrate
-            php artisan config:clear
-            php artisan cache:clear
-            php artisan view:clear
+#            cd backend_dev
+#            git stash
+#            git pull origin development
+#            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+#            php artisan migrate
+#            php artisan config:clear
+#            php artisan cache:clear
+#            php artisan view:clear
 #            php artisan storage:link
 #            git pull origin main
 #            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
