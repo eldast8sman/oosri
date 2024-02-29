@@ -35,7 +35,7 @@ Route::prefix('seller')->group(function(){
 
         Route::controller(SellerBusinessController::class)->group(function(){
             Route::post('/businesses', 'store')->name('seller.business.store');
-            Route::get('/businesses', 'index')->nam('seller.business.index');
+            Route::get('/businesses', 'index')->name('seller.business.index');
             Route::get('/businesses/{slug}', 'show')->name('seller.business.show');
             Route::get('/businesses/{slug}/switch', 'switch_business')->name('seller.switchBusiness');
         });
