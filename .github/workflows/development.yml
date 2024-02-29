@@ -49,9 +49,17 @@ jobs:
           script_stop: true
           script: |
             cd /home/oosrnrnr
-            git clone --single-branch --branch development https://github.com/eldast8sman/oosri.git laravel_backend
-            php -r "file_exists('.env') || copy('.env.example', '.env');"
-#            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+            cd laravel_backend
+            git pull origin development
+            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+            php artisan storage:link
+            php artisan key:generate
+            php artisan jwt:secret
+            php artisan migrate
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+            php artisan storage:link
 #            cd backend_dev
 #            git stash
 #            git pull origin development
