@@ -50,7 +50,8 @@ jobs:
           script: |
             cd /home/oosrnrnr
             git clone --single-branch --branch development https://github.com/eldast8sman/oosri.git laravel_backend
-            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+            php -r "file_exists('.env') || copy('.env.example', '.env');"
+#            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 #            cd backend_dev
 #            git stash
 #            git pull origin development
