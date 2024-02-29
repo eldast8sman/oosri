@@ -53,9 +53,11 @@ Route::prefix('seller')->group(function(){
 Route::prefix('admin')->group(function(){
     Route::controller(AdminAuthController::class)->group(function(){
         Route::post('/add-first-admin', 'storeAdmin')->name('addFirstAdmin');
+        Route::get('/by-token/{token}', 'byToken')->name('admin.byToken');
         Route::post('/activate', 'activate_account')->name('admin.activateAccount');
         Route::post('/login', 'login')->name('admin.login');
         Route::post('/forgot-password', 'forgot_password')->name('admin.forgotPassword');
+        Route::post('/check-pin', 'check_pin')->name('admin.checkPin');
         Route::post('/reset-password', 'reset_password')->name('admin.resetPassword');
     });
 
@@ -78,7 +80,7 @@ Route::prefix('admin')->group(function(){
 
         Route::controller(AdminSellerBusinessController::class)->group(function(){
             Route::get('/businesses', 'index')->name('admin.busness.index');
-            Route::get('/lastest-businesses', 'new_businesses')->name('admin.latestBusiness');
+            Route::get('/latest-businesses', 'new_businesses')->name('admin.latestBusiness');
             Route::get('/pending-businesses', 'pending_businesses')->name('admin.pendingBusiness');
             Route::get('/businesses/{business}/verify', 'verification')->name('admin.business.verification');
         });

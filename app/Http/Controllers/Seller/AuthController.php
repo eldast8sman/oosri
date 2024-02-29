@@ -226,7 +226,6 @@ class AuthController extends Controller
     }
 
     public function pin_check($email, $pin){
-        $errors = "";
         $seller = Seller::where('email', $email)->first();
         if(empty($seller->token)){
             $this->errors = "Wrong PIN";
