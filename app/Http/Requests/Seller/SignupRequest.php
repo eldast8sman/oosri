@@ -27,15 +27,7 @@ class SignupRequest extends FormRequest
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:sellers,email',
             'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
-            'business_type' => 'required|string',
-            'phone' => 'required_if:business_type,personal|string',
-            'address' => 'required_if:business_type,personal|string',
-            'city' => 'required_if:business_type,personal|string',
-            'state' => 'required_if:business_type,personal|string',
-            'zip_code' => 'string|nullable',
-            'description' => 'string|nullable',
-            'government_id_type' => 'required|string',
-            'government_id' => 'required|file|mimes:jpg,jpeg,png|max:15000'
+            'profile_photo' => 'required|file|mimes:jpg,jpeg,png,gif|nullable'
         ];
     }
 }

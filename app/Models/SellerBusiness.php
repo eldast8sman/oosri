@@ -12,6 +12,7 @@ class SellerBusiness extends Model
     use HasFactory, HasSlug;
 
     protected $fillable = [
+        'seller_id',
         'business_name',
         'slug',
         'business_type',
