@@ -27,7 +27,7 @@ class SignupRequest extends FormRequest
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:sellers,email',
             'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
-            'profile_photo' => 'file|mimes:jpg,jpeg,png,gif|nullable'
+            'profile_photo' => 'required|file|mimes:jpg,jpeg,png,gif|nullable'
         ];
     }
 }
