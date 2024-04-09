@@ -84,6 +84,7 @@ class SellerBusinessController extends Controller
         }
 
         $seller->business_id = $business->id;
+        $seller->business_type = null;
         $seller->save();
 
         return response([
