@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('dob')->nullable();
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->integer('profile_photo')->nullable();
             $table->string('location')->nullable();
             $table->string('verification_token')->nullable();

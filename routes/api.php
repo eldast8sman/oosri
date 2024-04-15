@@ -35,6 +35,7 @@ Route::prefix('seller')->group(function(){
             Route::get('/me', 'me')->name('seller.me');
             Route::get('/resend-activation-pin', 'resend_pin')->name('seller.resendPin');
             Route::post('/activate', 'activate_account')->name('seller.activate');
+            Route::get('/refresh-token', 'refreshToken')->name('seller.refreshToken');
         });
 
         Route::controller(SellerBusinessController::class)->group(function(){

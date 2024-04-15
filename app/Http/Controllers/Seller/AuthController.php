@@ -59,7 +59,7 @@ class AuthController extends Controller
                 'message' => join(' ', $errors)
             ], 409);
         }
-        $all = $request->except(['profile_photo']);
+        $all = $request->except(['profile_photo', 'password']);
 
         if(!$seller = Seller::create($all)){
             return response([
@@ -67,6 +67,8 @@ class AuthController extends Controller
                 'message' => 'Account creation failed'
             ], 500);
         }
+
+        $seller->password = Hash::make($request->password);
 
         if(isset($request->profile_photo) and !empty($request->profile_photo)){
             if(!$file = MediaFileController::upload_file($request->profile_photo)){
@@ -346,5 +348,14 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Password reset successful'
         ], 200);
+    }
+
+    public function refreshToken(){
+        $token = auth('seller-api')->refresh();
+
+        return response([
+            'status' => 'success',
+            'message' => $token
+        ]);
     }
 }
