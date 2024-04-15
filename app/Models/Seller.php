@@ -19,6 +19,7 @@ class Seller extends Authenticatable implements JWTSubject
         'gender',
         'dob',
         'email',
+        'phone',
         'password',
         'profile_photo',
         'location',
@@ -30,6 +31,7 @@ class Seller extends Authenticatable implements JWTSubject
         'business_id',
         'government_id_type',
         'government_id',
+        'business_type',
         'activation_status',
         'last_login',
         'prev_login'

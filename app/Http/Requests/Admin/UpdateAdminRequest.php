@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Seller;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class SignupRequest extends FormRequest
+class UpdateAdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +22,9 @@ class SignupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'name' => 'required|string',
             'email' => 'required|string|email',
-            'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
-            'profile_photo' => 'required|file|mimes:jpg,jpeg,png,gif|nullable',
-            'business_type' => 'required|string',
+            'role' => 'required|string',
             'phone' => 'required|string'
         ];
     }

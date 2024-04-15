@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('seller_businesses', function (Blueprint $table) {
-            $table->string('verification_status')->default(0)->after('phone');
+        Schema::table('sellers', function (Blueprint $table) {
+            $table->string('phone')->nullable()->after('email');
+            $table->string('business_type')->nullable()->after('government_id');
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('seller_businesses', function (Blueprint $table) {
-            $table->dropColumn('verification_status');
+        Schema::table('sellers', function (Blueprint $table) {
+            $table->dropColumn('phone');
+            $table->dropColumn('business_type');
         });
     }
 };

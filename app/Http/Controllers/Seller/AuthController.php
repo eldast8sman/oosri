@@ -46,6 +46,67 @@ class AuthController extends Controller
     }
 
     public function store(SignupRequest $request){
+        $errors = [];
+        if(!empty(Seller::where('email', $request->email)->first())){
+            $errors[] = "Email not available!";
+        }
+        if(!empty(Seller::where('phone', $request->phone)->first())){
+            $erroors[] = "Phone Number already taken";
+        }
+        if(!empty($errors)){
+            return response([
+                'status' => 'failed',
+                'message' => join(' ', $errors)
+            ], 409);
+        }
+        $all = $request->except(['profile_photo']);
+
+        if(!$seller = Seller::create($all)){
+            return response([
+                'status' => 'failed',
+                'message' => 'Account creation failed'
+            ], 500);
+        }
+
+        if(isset($request->profile_photo) and !empty($request->profile_photo)){
+            if(!$file = MediaFileController::upload_file($request->profile_photo)){
+                $seller->delete();
+
+                return response([
+                    'status' => 'failed',
+                    'message' => 'Account creation failed'
+                ], 500);
+            }
+
+            $seller->profile_photo = $file->id;
+            $seller->save();
+        }
+
+        $token = mt_rand(100000, 999999);
+        $seller->verification_token = Crypt::encryptString($token);
+        $seller->verification_token_expiry = date('Y-m-d H:i:s', time() + (60 * 30));
+        $seller->save();
+
+        $seller->name = $seller->first_name.' '.$seller->last_name;
+        Mail::to($seller)->send(new SendActivationMail($seller->name, $token));
+        
+        $token = auth('seller-api')->login($seller);
+
+        $new_seller = self::seller($seller);
+        $new_seller->authorization = [
+            'token' => $token,
+            'type' => 'Bearer',
+            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+        ];
+
+        return response([
+            'status' => 'success',
+            'message' => 'Signup successful',
+            'data' => $new_seller
+        ], 200);
+    }
+
+    public function old_store(SignupRequest $request){
         if(!$seller = Seller::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -226,7 +287,6 @@ class AuthController extends Controller
     }
 
     public function pin_check($email, $pin){
-        $errors = "";
         $seller = Seller::where('email', $email)->first();
         if(empty($seller->token)){
             $this->errors = "Wrong PIN";
