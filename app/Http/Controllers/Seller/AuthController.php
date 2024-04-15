@@ -46,6 +46,19 @@ class AuthController extends Controller
     }
 
     public function store(SignupRequest $request){
+        $errors = [];
+        if(!empty(Seller::where('email', $request->email)->first())){
+            $errors[] = "Email not available!";
+        }
+        if(!empty(Seller::where('phone', $request->phone)->first())){
+            $erroors[] = "Phone Number already taken";
+        }
+        if(!empty($errors)){
+            return response([
+                'status' => 'failed',
+                'message' => join(' ', $errors)
+            ], 409);
+        }
         $all = $request->except(['profile_photo']);
 
         if(!$seller = Seller::create($all)){

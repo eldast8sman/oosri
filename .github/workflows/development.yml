@@ -52,7 +52,7 @@ jobs:
             cd laravel_backend
             git pull origin development
             composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-            php artisan migrate
+            php artisan migrate:refresh
             php artisan config:clear
             php artisan cache:clear
             php artisan view:clear
