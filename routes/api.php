@@ -28,6 +28,7 @@ Route::prefix('seller')->group(function(){
         Route::post('/forgot-password', 'forgot_password')->name('seller.forgotPassword');
         Route::post('/check-pin', 'check_pin')->name('seller.checkPin');
         Route::post('/reset-password', 'reset_password')->name('seller.resetPaosswrd');
+        Route::get('/refresh-token', 'refreshToken')->name('seller.refreshToken');
     });
 
     Route::middleware('auth:seller-api')->group(function(){
@@ -59,6 +60,7 @@ Route::prefix('admin')->group(function(){
         Route::post('/forgot-password', 'forgot_password')->name('admin.forgotPassword');
         Route::post('/check-pin', 'check_pin')->name('admin.checkPin');
         Route::post('/reset-password', 'reset_password')->name('admin.resetPassword');
+        Route::get('/refresh-token', 'refreshToken')->name('seller.refreshToken');
     });
 
     Route::middleware('auth:admin-api')->group(function(){

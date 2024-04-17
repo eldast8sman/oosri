@@ -157,7 +157,7 @@ class AuthController extends Controller
         $auth = [
             'token' => $token,
             'type' => 'Bearer',
-            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+            'expires' => auth('admin-api')->factory()->getTTL()
         ];
 
         $admin->authorization = $auth;
@@ -296,5 +296,25 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Logged out successfully'
         ], 200);
+    }
+
+    public function refreshToken(){
+        try {
+            $token = auth('admin-api')->refresh();
+
+            return response([
+                'status' => 'success',
+                'data' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'expires' => auth('admin-api')->factory()->getTTL() * 60
+                ]
+            ]);
+        } catch(Exception $e){
+            return response([
+                'status' => 'failed',
+                'message' => 'Login Expired'
+            ], 410);
+        }
     }
 }

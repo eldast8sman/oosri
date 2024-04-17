@@ -17,6 +17,7 @@ use App\Models\MediaFile;
 use App\Models\Seller;
 use App\Models\SellerBusiness;
 use App\Models\SellerBusinessSeller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -59,7 +60,7 @@ class AuthController extends Controller
                 'message' => join(' ', $errors)
             ], 409);
         }
-        $all = $request->except(['profile_photo']);
+        $all = $request->except(['profile_photo', 'password']);
 
         if(!$seller = Seller::create($all)){
             return response([
@@ -67,6 +68,8 @@ class AuthController extends Controller
                 'message' => 'Account creation failed'
             ], 500);
         }
+
+        $seller->password = Hash::make($request->password);
 
         if(isset($request->profile_photo) and !empty($request->profile_photo)){
             if(!$file = MediaFileController::upload_file($request->profile_photo)){
@@ -96,7 +99,7 @@ class AuthController extends Controller
         $new_seller->authorization = [
             'token' => $token,
             'type' => 'Bearer',
-            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+            'expires' => auth('seller-api')->factory()->getTTL() * 60
         ];
 
         return response([
@@ -194,7 +197,7 @@ class AuthController extends Controller
         $seller->authorization = [
             'token' => $token,
             'type' => 'Bearer',
-            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+            'expires' => auth('seller-api')->factory()->getTTL() * 60
         ];
 
         return response([
@@ -346,5 +349,25 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Password reset successful'
         ], 200);
+    }
+
+    public function refreshToken(){
+        try {
+            $token = auth('seller-api')->refresh();
+
+            return response([
+                'status' => 'success',
+                'data' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'expires' => auth('seller-api')->factory()->getTTL() * 60
+                ]
+            ]);
+        } catch(Exception $e){
+            return response([
+                'status' => 'failed',
+                'message' => 'Login Expired'
+            ], 410);
+        }
     }
 }
