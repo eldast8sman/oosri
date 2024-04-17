@@ -17,6 +17,7 @@ use App\Models\MediaFile;
 use App\Models\Seller;
 use App\Models\SellerBusiness;
 use App\Models\SellerBusinessSeller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -98,7 +99,7 @@ class AuthController extends Controller
         $new_seller->authorization = [
             'token' => $token,
             'type' => 'Bearer',
-            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+            'expires' => auth('seller-api')->factory()->getTTL() * 60
         ];
 
         return response([
@@ -196,7 +197,7 @@ class AuthController extends Controller
         $seller->authorization = [
             'token' => $token,
             'type' => 'Bearer',
-            'expires' => date('Y-m-d H:i:s', time() + 60 * 60 * 24)
+            'expires' => auth('seller-api')->factory()->getTTL() * 60
         ];
 
         return response([
@@ -351,11 +352,22 @@ class AuthController extends Controller
     }
 
     public function refreshToken(){
-        $token = auth('seller-api')->refresh();
+        try {
+            $token = auth('seller-api')->refresh();
 
-        return response([
-            'status' => 'success',
-            'message' => $token
-        ]);
+            return response([
+                'status' => 'success',
+                'data' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'expires' => auth('seller-api')->factory()->getTTL() * 60
+                ]
+            ]);
+        } catch(Exception $e){
+            return response([
+                'status' => 'failed',
+                'message' => 'Login Expired'
+            ], 410);
+        }
     }
 }

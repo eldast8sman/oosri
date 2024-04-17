@@ -29,7 +29,7 @@ class SignupRequest extends FormRequest
             'password' => ['required', Password::min(8)->mixedCase()->numbers()->symbols()->uncompromised()],
             'profile_photo' => 'required|file|mimes:jpg,jpeg,png,gif|nullable',
             'business_type' => 'required|string',
-            'phone' => 'required|string'
+            'location' => 'required|string'
         ];
     }
 }
