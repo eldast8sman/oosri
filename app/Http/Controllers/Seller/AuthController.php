@@ -51,8 +51,10 @@ class AuthController extends Controller
         if(!empty(Seller::where('email', $request->email)->first())){
             $errors[] = "Email not available!";
         }
-        if(!empty(Seller::where('phone', $request->phone)->first())){
-            $errors[] = "Phone Number already taken";
+        if(!empty($request->phone)){
+            if(!empty(Seller::where('phone', $request->phone)->first())){
+                $errors[] = "Phone Number already taken";
+            }
         }
         if(!empty($errors)){
             return response([
