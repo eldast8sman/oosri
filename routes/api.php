@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\SellerBusinessController as AdminSellerBusinessController;
+use App\Http\Controllers\APIPlayGroudController;
 use App\Http\Controllers\Seller\AuthController;
 use App\Http\Controllers\Seller\SellerBusinessController;
 use App\Http\Controllers\Seller\WalletController;
@@ -20,6 +21,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::controller(APIPlayGroudController::class)->group(function(){
+    Route::get('/test-phone-brands', 'phone_brands');
+    Route::get('/phone-brands/{brand_id}/phones', 'phones_by_brand');
+    Route::get('/phones/{phone_id}', 'phone_details');
+});
 
 Route::prefix('seller')->group(function(){
     Route::controller(AuthController::class)->group(function(){
